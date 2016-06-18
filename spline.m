@@ -1,4 +1,8 @@
-function [pols] = spline(table)
+function funs = spline()
+    funs.splineT=@splineT;
+    funs.fromFunction=@fromFunction;
+end
+function [pols] = splineT(table)
     
     n = size(table, 1) - 1;
 
@@ -34,6 +38,22 @@ function [pols] = spline(table)
     end
     plotSpline(pols, table);
 end
+
+function fromFunction(f, x0, xn, div)
+    f = inline(f);
+    table = zeros(div+1, 2);
+    for i = 2:div+1
+        table(i,1) = x0 + (i-1)*((xn-x0)/div);
+        table(i,2) = f(table(i,1));
+    end
+    table(1,1) = x0;
+    table(1,2) = f(table(1,1));
+    splineT(table);
+    hold on;
+    r = linspace(table(1,1), table(div+1,1), 100);
+    plot(r, f(r(:)));
+    hold off;
+end    
 
 function plotSpline(pols, table)
     n = size(pols, 1);
