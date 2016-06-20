@@ -19,7 +19,7 @@ function [sol, flag] = relajacion(A, b, iter, prec, w)
             flag = 1;
             break;
         end
-        u_k = u_k1; 
+        u_k = u_k1;
     end
     sol = u_k1;
 end
