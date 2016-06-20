@@ -26,7 +26,7 @@
 \maketitle
 \section*{Introducción}
 En este documento se recoge una explicación del funcionamiento de los diferentes scripts de MATLAB elaborados para la asignatura de Métodos Numéricos. La información aquí plasmada podrá consultarse libremente en mi perfil de GitHub junto con el código al que se refiere.\\ \par
-Antes de concluir con esta breve introducción conviene aclarar el modo en que debe llamarse a las funciones de estos scripts. Dado que MATLAB (o el intento de hacer algo parecido de forma libre FreeMat) restringe la visibilidad de sus funciones al archivo en el que se encuentra salvo las de igual nombre que este, me vi en la obligación de seguir el consejo de mis amigos de StackOverflow\footnote{\url{http://stackoverflow.com/questions/3569933/}} que me recomendaron hacer la chapuza de lo que en este mundo de matemáticos con ordenador se llaman struct (ojalá se hubieran copiado un poco más de Stroustrup):
+Antes de concluir con esta breve introducción conviene aclarar el modo en que debe llamarse a las funciones de estos scripts. Dado que MATLAB (o el intento de hacer algo parecido de forma libre FreeMat) restringe la visibilidad de sus funciones al archivo en el que se encuentra, salvo las de igual nombre que este, me vi en la obligación de seguir el consejo de mis amigos de StackOverflow\footnote{\url{http://stackoverflow.com/questions/3569933/}} que me recomendaron hacer la chapuza de lo que en este mundo de matemáticos con ordenador se llaman struct (ojalá se hubieran copiado un poco más de Stroustrup):
 \begin{verbatim}
     function funs = makefuns
       funs.fun1=@fun1;
@@ -40,7 +40,7 @@ Antes de concluir con esta breve introducción conviene aclarar el modo en que d
     end
 \end{verbatim}
 \par
-En la estructura $makefuns$ del ejemplo (de divertido tiene poco pese al nombre) se agrupan las dos funciones del archivo, $fun1$ y $fun2$. Lo que viene a ser un puntero a estas dos funciones nos permite utilizarlas fuera del archivo mediante este truco llamándolas mediante las variables f1 y f2.
+En la estructura $makefuns$ del ejemplo (de divertido tiene poco pese al nombre) se agrupan las dos funciones del archivo, $fun1$ y $fun2$. Lo que viene a ser un puntero a estas dos funciones, nos permite utilizarlas fuera del archivo llamándolas mediante las variables f1 y f2.
 \begin{verbatim}
     >> myfuns = makefuns;
     >> f1 = makefuns.fun1();
@@ -57,14 +57,14 @@ A falta de una orientación a objetos decente (porque parece que es lo que piden
 Ahora sí pasamos a ver las distintas implementaciones.
 \section*{Eliminación gaussiana}
 La eliminación gaussiana es un método para resolver sistemas de ecuaciones lineales. La implementación de dicho método se encuentra en el fichero gauss.m del repositorio.\\ \par
-Llamando a la función $gauss(A, b)$, donde $A$ es una matriz cuadrada de rango máximo y $b$ es un vector, obtenemos una matriz triangular asociada sobre la que podremos aplicar el método de remonte apoyándonos en la variable $punt$ que almacena las permutaciones de filas realizadas a la matriz original. La función $gausssolver(A, b, punt)$ aplica el remonte una vez procesada la información requerida.\\ \par
+Llamando a la función $gauss(A, b)$, donde $A$ es una matriz cuadrada de rango máximo y $b$ es un vector, obtenemos una matriz triangular asociada sobre la que podremos aplicar el método de remonte, apoyándonos en la variable $punt$ que almacena las permutaciones de filas realizadas a la matriz original. La función $gausssolver(A, b, punt)$ aplica el remonte una vez procesada la información requerida.\\ \par
 La razón por la que se divide el algoritmo en dos funciones es para facilitar la tarea de resolver varios sistemas con la misma matriz $A$ de coeficientes.
 \section*{Factorización LU.}
-Un método de resolución alternativo de sistemas lineales es la factorización LU implementado en lufact.m en el repositorio. Cabe recordar que este método no es aplicable a toda matriz cuadrada invertible.\\ \par
+Un método de resolución alternativo de sistemas lineales es la factorización LU, implementado en lufact.m en el repositorio. Cabe recordar que este método no es aplicable a toda matriz cuadrada invertible.\\ \par
 La función $lufact(A, b)$ transforma la matriz $A$ en su descomposición como producto de una matriz triangular inferior con una matriz triangular superior. Dichas matriz triangulares se agrupan en una única matriz $Amod$ dado que la diagonal de la inferior son todo unos. Posteriormente la función $lusolver(Amod, b)$ resuelve los dos sistemas triangulares resultantes mediante el método del remonte.\\ \par
 De nuevo se contemplan dos funciones para facilitar la resolución de nuevos sistemas con la misma matriz de coeficientes.
 \section*{Factorización de Cholesky.}
-La factorización de Cholesky (cholesky.m) es un caso particular de factorización LU para matrices simétricas definidas positivas. En este caso particular la descomposición se hace en dos matrices la una traspuesta de la otra, lo que reduce el número de cálculos considerablemente. La función $cholesky(A, b)$ se encarga de la pertinente descomposición y $choleskysolver(Amod, b)$ de aplicar los dos métodos de remonte.
+La factorización de Cholesky (cholesky.m) es un caso particular de factorización LU para matrices simétricas definidas positivas. En este caso particular la descomposición se hace en dos matrices, la una traspuesta de la otra, lo que reduce el número de cálculos considerablemente. La función $cholesky(A, b)$ se encarga de la pertinente descomposición y $choleskysolver(Amod, b)$ de aplicar los dos métodos de remonte.
 \section*{Resolución de sistemas tridiagonales.}
 Para sistemas tridiagonales existe una formula alternativa para su resolución donde primero se procesan unos coeficientes que posteriormente sirven para construir la solución en tiempo lineal. Este método es empleado posteriormente para el cálculo de funciones spline cúbicas. Su implementación se encuentra en tridiag.m y se utiliza llamando a la función $tridiag(A, b)$ que devuelve la solución en forma de vector.
 \section*{Método de Jacobi.}
@@ -80,5 +80,6 @@ Dada una tabla con dos columnas, la primera con los valores x y la segunda con s
 En el mismo archivo se cuenta con una función que representa graficamente el polinomio, $plotNewton(pol, table)$, y una función, $addPoint(val, img, pol, Pi, table)$, que permite añadir un punto más a la interpolación llamándola con los datos ya procesados de la tabla, a saber, $val$, valor x, $img$, su imagen, $pol$, polinomio de interpolación actual, $Pi$, función $\Pi_n$ actual, y $table$, con los valores de las diferencias divididas antes comentadas.
 \section*{Funciones spline cúbicas.}
 Por último, se recoge un script spline.m con una implementación del método de interpolación mediante funciones spline cúbicas.\\ \par
-Llamando a $splineT(table)$ con una tabla con dos columnas como la del método anterior, se calcula una función a trozos de clase 2 que la aproxima. Para ello, obtiene unos coeficientes o momentos asociados a la tabla de valores aportada, que sirven para el cálculo de la función en los distintos intervalos, resolviendo un sistema tridiagonal. Se incorporan dos funciones adicionales $plotSpline(pols, table)$, que permite plotear la función interpoladora, y $fromFunction(f, x0, xn, div)$, que interpola directamente una función $f$ (en forma de string) en el intervalo $[x_0, x_n]$ con un paso de $div$. Además, esta última función representa sobre la spline la función $f$ para poder hacer una comparación.
+Llamando a $splineT(table)$ con una tabla con dos columnas como la del método anterior, se calcula una función a trozos de clase 2 que la aproxima. Para ello, obtiene unos coeficientes o momentos asociados a la tabla de valores aportada, que sirven para el cálculo de la función en los distintos intervalos, resolviendo un sistema tridiagonal.\\ \par
+Se incorporan dos funciones adicionales, $plotSpline(pols, table)$, que permite plotear la función interpoladora, y $fromFunction(f, x0, xn, div)$, que interpola directamente una función $f$ (en forma de string) en el intervalo $[x_0, x_n]$ con un paso de $div$. Además, esta última función representa sobre la spline la función $f$ para poder hacer una comparación visual.
 \end{document}
