@@ -1,4 +1,9 @@
-function [sol, lumat] = lufact(A, b) %Resuelve sistemas por el método de factorización LU.
+function funs = lufact()
+    funs.lufactM=@lufactM;
+    funs.lusolver=@lusolver;
+end
+
+function [sol, lumat] = lufactM(A, b) %Resuelve sistemas por el método de factorización LU.
     n = size(A)(1);
     ok = true;
     %L = eye(n)
@@ -24,8 +29,8 @@ function [sol, lumat] = lufact(A, b) %Resuelve sistemas por el método de factor
         sol = lusolver(A, b);
         lumat = A;
     end
-end 
-    
+end
+
 function sol = lusolver(Amod, b) %Permite resolver varios sistemas con la misma matriz
     n = size(Amod)(1);
     %Solución sistema triangular inferior con 1's en la diagonal
@@ -33,9 +38,9 @@ function sol = lusolver(Amod, b) %Permite resolver varios sistemas con la misma 
     for i = 1:n
         w(i) = b(i) - dot(Amod(i, 1:i-1), w(1:i-1));
     end
-    
+
     %L*w
-    
+
     %Solución sistema triangular superior arbitraria
     sol = zeros(n,1);
     for i = n:-1:1
