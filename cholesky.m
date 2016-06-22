@@ -9,7 +9,7 @@ function [sol, cholmat] = choleskyM(A, b) %Resuelve sistemas por el método de C
 
     for i = 1:n
         A(i,i) = (A(i,i) - dot(A(i, 1:i-1), A(i, 1:i-1)));
-        if A(i,i) < 0
+        if A(i,i) <= 0
             disp('No se puede hacer Cholesky')
             ok = false;
             break;
