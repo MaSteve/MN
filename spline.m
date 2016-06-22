@@ -46,18 +46,17 @@ function [pols] = splineT(table, tipo, dy0, dyn) % tipo 1 y 2
     plotSpline(pols, table);
 end
 
-function fromFunction(f, x0, xn, div) %vector de puntos
+function fromFunction(f, v) %vector de puntos
+	n = size(v, 2);
     f = eval(['@(x)' f]);
-    table = zeros(div+1, 2);
-    for i = 2:div+1
-        table(i,1) = x0 + (i-1)*((xn-x0)/div);
+    table = zeros(n, 2);
+    for i = 1:n
+        table(i,1) = v(i);
         table(i,2) = f(table(i,1));
     end
-    table(1,1) = x0;
-    table(1,2) = f(table(1,1));
     splineT(table, 1);
     hold on;
-    r = linspace(table(1,1), table(div+1,1), 100);
+    r = linspace(table(1,1), table(n,1), 100);
     plot(r, f(r(:)));
     hold off;
 end
