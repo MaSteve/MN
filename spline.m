@@ -2,7 +2,7 @@ function funs = spline()
     funs.splineT=@splineT;
     funs.fromFunction=@fromFunction;
 end
-function [pols] = splineT(table)
+function [pols] = splineT(table, tipo, dy0, dyn) % tipo 1 y 2
 
     n = size(table, 1) - 1;
 
@@ -26,6 +26,13 @@ function [pols] = splineT(table)
         ((table(j, 2) - table(j-1, 2))/(h(j-1))));
     end
 
+    if (tipo == 2)
+    	l(1) = 1;
+    	m(n+1) = 1;
+    	d(1) = (6/h(1))*((table(2,2)-table(1,2))/h(1) - dy0);
+    	d(n+1) = (6/h(n))*(dyn - (table(n+1, 2)-table(n,2))/h(n));
+    end
+
     A = 2*eye(n+1) + diag(l(1:n), 1)+ diag(m(2:n+1),-1);
     M = tridiag(A, d);
     pols = [];
@@ -39,8 +46,8 @@ function [pols] = splineT(table)
     plotSpline(pols, table);
 end
 
-function fromFunction(f, x0, xn, div)
-    f = inline(f);
+function fromFunction(f, x0, xn, div) %vector de puntos
+    f = eval(['@(x)' f]);
     table = zeros(div+1, 2);
     for i = 2:div+1
         table(i,1) = x0 + (i-1)*((xn-x0)/div);
@@ -48,7 +55,7 @@ function fromFunction(f, x0, xn, div)
     end
     table(1,1) = x0;
     table(1,2) = f(table(1,1));
-    splineT(table);
+    splineT(table, 1);
     hold on;
     r = linspace(table(1,1), table(div+1,1), 100);
     plot(r, f(r(:)));
